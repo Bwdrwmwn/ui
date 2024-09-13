@@ -24,6 +24,15 @@ function Library:Window(title)
     local toggleCallbacks = {}
 
     local function createButton(label, callback)
+        if type(label) ~= "string" then
+            warn("createButton: label should be a string")
+            return
+        end
+        if type(callback) ~= "function" then
+            warn("createButton: callback should be a function")
+            return
+        end
+
         local button = Instance.new("TextButton")
         button.Size = UDim2.new(0.8, 0, 0, 30)
         button.Position = UDim2.new(0.1, 0, 0.1 + (#buttonCallbacks * 0.1), 0)
@@ -33,13 +42,22 @@ function Library:Window(title)
         button.Parent = frame
 
         button.MouseButton1Click:Connect(function()
-            if callback then callback() end
+            callback() -- Ensure callback is a function
         end)
 
         table.insert(buttonCallbacks, callback)
     end
 
     local function createToggle(label, callback)
+        if type(label) ~= "string" then
+            warn("createToggle: label should be a string")
+            return
+        end
+        if type(callback) ~= "function" then
+            warn("createToggle: callback should be a function")
+            return
+        end
+
         local toggle = Instance.new("TextButton")
         toggle.Size = UDim2.new(0.8, 0, 0, 30)
         toggle.Position = UDim2.new(0.1, 0, 0.1 + (#toggleCallbacks * 0.1), 0)
@@ -52,7 +70,7 @@ function Library:Window(title)
         toggle.MouseButton1Click:Connect(function()
             isOn = not isOn
             toggle.Text = tostring(label) .. ": " .. (isOn and "ON" or "OFF") -- Ensure text is a string
-            if callback then callback(isOn) end
+            callback(isOn) -- Ensure callback is a function
         end)
 
         table.insert(toggleCallbacks, callback)
@@ -65,3 +83,4 @@ function Library:Window(title)
 end
 
 return Library
+

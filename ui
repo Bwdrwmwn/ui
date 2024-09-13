@@ -1,0 +1,66 @@
+-- Simple GUI Library
+
+local Library = {}
+
+function Library:Window(title)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, 300, 0, 200)
+    frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    frame.Parent = screenGui
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1, 0, 0, 30)
+    titleLabel.Text = title
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    titleLabel.Parent = frame
+
+    local buttonCallbacks = {}
+    local toggleCallbacks = {}
+
+    local function createButton(label, callback)
+        local button = Instance.new("TextButton")
+        button.Size = UDim2.new(0.8, 0, 0, 30)
+        button.Position = UDim2.new(0.1, 0, 0.1 + (#buttonCallbacks * 0.1), 0)
+        button.Text = label
+        button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        button.TextColor3 = Color3.fromRGB(255, 255, 255)
+        button.Parent = frame
+
+        button.MouseButton1Click:Connect(function()
+            if callback then callback() end
+        end)
+
+        table.insert(buttonCallbacks, callback)
+    end
+
+    local function createToggle(label, callback)
+        local toggle = Instance.new("TextButton")
+        toggle.Size = UDim2.new(0.8, 0, 0, 30)
+        toggle.Position = UDim2.new(0.1, 0, 0.1 + (#toggleCallbacks * 0.1), 0)
+        toggle.Text = label .. ": OFF"
+        toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+        toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        toggle.Parent = frame
+
+        local isOn = false
+        toggle.MouseButton1Click:Connect(function()
+            isOn = not isOn
+            toggle.Text = label .. ": " .. (isOn and "ON" or "OFF")
+            if callback then callback(isOn) end
+        end)
+
+        table.insert(toggleCallbacks, callback)
+    end
+
+    return {
+        Button = createButton,
+        Toggle = createToggle
+    }
+end
+
+return Library

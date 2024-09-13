@@ -1,4 +1,4 @@
--- Enhanced GUI Library with String Validation
+-- Enhanced GUI Library with String Validation and Debugging
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -25,7 +25,7 @@ function Library:Window(title)
 
     local function createButton(label, callback)
         if type(label) ~= "string" then
-            warn("createButton: label should be a string, but got", type(label))
+            warn("createButton: label should be a string, but got", type(label), label)
             return
         end
         if type(callback) ~= "function" then
@@ -54,7 +54,7 @@ function Library:Window(title)
 
     local function createToggle(label, callback)
         if type(label) ~= "string" then
-            warn("createToggle: label should be a string, but got", type(label))
+            warn("createToggle: label should be a string, but got", type(label), label)
             return
         end
         if type(callback) ~= "function" then
@@ -91,4 +91,3 @@ function Library:Window(title)
 end
 
 return Library
-

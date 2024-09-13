@@ -1,4 +1,4 @@
--- Simplified GUI Library
+-- Enhanced GUI Library with Fixes
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -8,8 +8,8 @@ function Library:Window(title)
     screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 300, 0, 200)
-    frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+    frame.Size = UDim2.new(0, 300, 0, 300)  -- Increased height for more space
+    frame.Position = UDim2.new(0.5, -150, 0.5, -150)
     frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     frame.Parent = screenGui
 

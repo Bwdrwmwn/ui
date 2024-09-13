@@ -1,6 +1,7 @@
--- Simple GUI Library
+-- Enhanced GUI Library with Animations
 
 local Library = {}
+local TweenService = game:GetService("TweenService")
 
 function Library:Window(title)
     local screenGui = Instance.new("ScreenGui")
@@ -31,8 +32,18 @@ function Library:Window(title)
         button.TextColor3 = Color3.fromRGB(255, 255, 255)
         button.Parent = frame
 
+        -- Animation setup
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        local tweenGoal = {BackgroundColor3 = Color3.fromRGB(150, 150, 150)}
+
         button.MouseButton1Click:Connect(function()
-            if callback then callback() end
+            local tween = TweenService:Create(button, tweenInfo, tweenGoal)
+            tween:Play()
+            tween.Completed:Connect(function()
+                if callback then callback() end
+                local revertTween = TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(100, 100, 100)})
+                revertTween:Play()
+            end)
         end)
 
         table.insert(buttonCallbacks, callback)
@@ -48,9 +59,14 @@ function Library:Window(title)
         toggle.Parent = frame
 
         local isOn = false
+        local tweenInfo = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
         toggle.MouseButton1Click:Connect(function()
             isOn = not isOn
             toggle.Text = label .. ": " .. (isOn and "ON" or "OFF")
+            local goal = isOn and Color3.fromRGB(50, 200, 50) or Color3.fromRGB(100, 100, 100)
+            local tween = TweenService:Create(toggle, tweenInfo, {BackgroundColor3 = goal})
+            tween:Play()
             if callback then callback(isOn) end
         end)
 

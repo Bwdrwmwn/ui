@@ -1,3 +1,4 @@
+-- Enhanced GUI Library with String Validation
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -90,3 +91,4 @@ function Library:Window(title)
 end
 
 return Library
+

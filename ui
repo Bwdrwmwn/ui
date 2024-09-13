@@ -1,93 +1,194 @@
--- Enhanced GUI Library with String Validation and Debugging
-
-local Library = {}
 local TweenService = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
 
-function Library:Window(title)
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- Create ScreenGui
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AdvancedGUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
 
-    local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 300, 0, 300)
-    frame.Position = UDim2.new(0.5, -150, 0.5, -150)
-    frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    frame.Parent = screenGui
+-- Create the main container for the GUI
+local container = Instance.new("Frame")
+container.Name = "MainContainer"
+container.Size = UDim2.new(0, 300, 0, 400)
+container.Position = UDim2.new(0.5, -150, 0.5, -200)
+container.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+container.BorderSizePixel = 0
+container.Parent = screenGui
 
-    local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.Text = tostring(title) -- Ensure title is a string
-    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    titleLabel.Parent = frame
-
-    local buttonCallbacks = {}
-    local toggleCallbacks = {}
-
-    local function createButton(label, callback)
-        if type(label) ~= "string" then
-            warn("createButton: label should be a string, but got", type(label), label)
-            return
-        end
-        if type(callback) ~= "function" then
-            warn("createButton: callback should be a function, but got", type(callback))
-            return
-        end
-
-        local button = Instance.new("TextButton")
-        button.Size = UDim2.new(0.8, 0, 0, 30)
-        button.Position = UDim2.new(0.1, 0, 0.1 + (#buttonCallbacks * 0.1), 0)
-        button.Text = tostring(label) -- Ensure label is a string
-        button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-        button.TextColor3 = Color3.fromRGB(255, 255, 255)
-        button.Parent = frame
-
-        button.MouseButton1Click:Connect(function()
-            if type(callback) == "function" then
-                callback() -- Ensure callback is a function
-            else
-                warn("Callback is not a function")
-            end
-        end)
-
-        table.insert(buttonCallbacks, callback)
-    end
-
-    local function createToggle(label, callback)
-        if type(label) ~= "string" then
-            warn("createToggle: label should be a string, but got", type(label), label)
-            return
-        end
-        if type(callback) ~= "function" then
-            warn("createToggle: callback should be a function, but got", type(callback))
-            return
-        end
-
-        local toggle = Instance.new("TextButton")
-        toggle.Size = UDim2.new(0.8, 0, 0, 30)
-        toggle.Position = UDim2.new(0.1, 0, 0.1 + (#toggleCallbacks * 0.1), 0)
-        toggle.Text = tostring(label) .. ": OFF" -- Ensure label is a string
-        toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-        toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-        toggle.Parent = frame
-
-        local isOn = false
-        toggle.MouseButton1Click:Connect(function()
-            isOn = not isOn
-            toggle.Text = tostring(label) .. ": " .. (isOn and "ON" or "OFF") -- Ensure text is a string
-            if type(callback) == "function" then
-                callback(isOn) -- Ensure callback is a function
-            else
-                warn("Callback is not a function")
-            end
-        end)
-
-        table.insert(toggleCallbacks, callback)
-    end
-
-    return {
-        Button = createButton,
-        Toggle = createToggle
-    }
+local function resize(newHeight)
+    container.Size = UDim2.new(0, 300, 0, newHeight)
 end
 
-return Library
+-- Header
+local header = Instance.new("TextLabel")
+header.Name = "Header"
+header.Parent = container
+header.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+header.Size = UDim2.new(1, 0, 0, 40)
+header.Font = Enum.Font.SourceSansBold
+header.Text = "Advanced GUI"
+header.TextColor3 = Color3.fromRGB(255, 255, 255)
+header.TextSize = 24
+header.TextXAlignment = Enum.TextXAlignment.Center
+
+-- Toggle
+local toggleContainer = Instance.new("Frame")
+toggleContainer.Name = "ToggleContainer"
+toggleContainer.Parent = container
+toggleContainer.Size = UDim2.new(1, 0, 0, 60)
+toggleContainer.Position = UDim2.new(0, 0, 0.1, 0)
+
+local toggle = Instance.new("TextButton")
+toggle.Name = "Toggle"
+toggle.Parent = toggleContainer
+toggle.Size = UDim2.new(0, 200, 0, 30)
+toggle.Position = UDim2.new(0.5, -100, 0.5, -15)
+toggle.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+toggle.Font = Enum.Font.SourceSans
+toggle.Text = "Toggle"
+toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggle.TextSize = 18
+
+local toggleInner = Instance.new("Frame")
+toggleInner.Name = "ToggleInner"
+toggleInner.Parent = toggle
+toggleInner.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+toggleInner.Size = UDim2.new(0, 0, 0, 0)
+toggleInner.BorderSizePixel = 0
+
+local isToggled = false
+
+local function setToggle(bool)
+    isToggled = bool
+    local size = bool and UDim2.new(0, 20, 0, 20) or UDim2.new(0, 0, 0, 0)
+    TweenService:Create(
+        toggleInner,
+        TweenInfo.new(0.1, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+        {Size = size}
+    ):Play()
+end
+
+toggle.MouseButton1Click:Connect(function()
+    setToggle(not isToggled)
+end)
+
+-- Slider
+local sliderContainer = Instance.new("Frame")
+sliderContainer.Name = "SliderContainer"
+sliderContainer.Parent = container
+sliderContainer.Size = UDim2.new(1, 0, 0, 60)
+sliderContainer.Position = UDim2.new(0, 0, 0.2, 0)
+
+local slider = Instance.new("TextButton")
+slider.Name = "Slider"
+slider.Parent = sliderContainer
+slider.Size = UDim2.new(0, 200, 0, 30)
+slider.Position = UDim2.new(0.5, -100, 0.5, -15)
+slider.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+slider.Font = Enum.Font.SourceSans
+slider.Text = ""
+slider.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+local sliderInner = Instance.new("Frame")
+sliderInner.Name = "SliderInner"
+sliderInner.Parent = slider
+sliderInner.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+sliderInner.Size = UDim2.new(0, 0, 0, 30)
+sliderInner.BorderSizePixel = 0
+
+local minValue, maxValue = 0, 100
+local sliderValue = 0
+
+local function updateSlider()
+    local percentage = (sliderValue - minValue) / (maxValue - minValue)
+    sliderInner.Size = UDim2.new(percentage, 0, 1, 0)
+end
+
+slider.MouseButton1Down:Connect(function()
+    local mouse = player:GetMouse()
+    local mouseX = mouse.X - slider.AbsolutePosition.X
+    sliderValue = math.clamp(math.floor(((maxValue - minValue) / slider.AbsoluteSize.X) * mouseX + minValue), minValue, maxValue)
+    updateSlider()
+end)
+
+-- Dropdown
+local dropdownContainer = Instance.new("Frame")
+dropdownContainer.Name = "DropdownContainer"
+dropdownContainer.Parent = container
+dropdownContainer.Size = UDim2.new(1, 0, 0, 60)
+dropdownContainer.Position = UDim2.new(0, 0, 0.3, 0)
+
+local dropdownButton = Instance.new("TextButton")
+dropdownButton.Name = "DropdownButton"
+dropdownButton.Parent = dropdownContainer
+dropdownButton.Size = UDim2.new(0, 200, 0, 30)
+dropdownButton.Position = UDim2.new(0.5, -100, 0.5, -15)
+dropdownButton.BackgroundColor3 = Color3.fromRGB(150, 150, 150)
+dropdownButton.Font = Enum.Font.SourceSans
+dropdownButton.Text = "Select Option"
+dropdownButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+local dropdownFrame = Instance.new("Frame")
+dropdownFrame.Name = "DropdownFrame"
+dropdownFrame.Parent = dropdownContainer
+dropdownFrame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+dropdownFrame.Size = UDim2.new(0, 200, 0, 0)
+dropdownFrame.Position = UDim2.new(0, 0, 1, 0)
+dropdownFrame.Visible = false
+
+local options = {"Option 1", "Option 2", "Option 3"}
+for i, option in ipairs(options) do
+    local optionButton = Instance.new("TextButton")
+    optionButton.Name = "Option" .. i
+    optionButton.Parent = dropdownFrame
+    optionButton.Size = UDim2.new(1, 0, 0, 30)
+    optionButton.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+    optionButton.Font = Enum.Font.SourceSans
+    optionButton.Text = option
+    optionButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+
+    optionButton.MouseButton1Click:Connect(function()
+        dropdownButton.Text = option
+        dropdownFrame.Visible = false
+    end)
+end
+
+dropdownButton.MouseButton1Click:Connect(function()
+    dropdownFrame.Visible = not dropdownFrame.Visible
+end)
+
+-- Button
+local actionButton = Instance.new("TextButton")
+actionButton.Name = "ActionButton"
+actionButton.Parent = container
+actionButton.Size = UDim2.new(0, 200, 0, 30)
+actionButton.Position = UDim2.new(0.5, -100, 0.8, 0)
+actionButton.BackgroundColor3 = Color3.fromRGB(50, 150, 50)
+actionButton.Font = Enum.Font.SourceSans
+actionButton.Text = "Action Button"
+actionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+actionButton.MouseButton1Click:Connect(function()
+    print("Action button clicked!")
+end)
+
+-- TextBox
+local textBoxContainer = Instance.new("Frame")
+textBoxContainer.Name = "TextBoxContainer"
+textBoxContainer.Parent = container
+textBoxContainer.Size = UDim2.new(1, 0, 0, 60)
+textBoxContainer.Position = UDim2.new(0, 0, 0.4, 0)
+
+local textBox = Instance.new("TextBox")
+textBox.Name = "TextBox"
+textBox.Parent = textBoxContainer
+textBox.Size = UDim2.new(0, 200, 0, 30)
+textBox.Position = UDim2.new(0.5, -100, 0.5, -15)
+textBox.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+textBox.Font = Enum.Font.SourceSans
+textBox.PlaceholderText = "Enter text here..."
+textBox.TextColor3 = Color3.fromRGB(0, 0, 0)
+textBox.TextSize = 18
+textBox.ClearTextOnFocus = false

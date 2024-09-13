@@ -1,4 +1,4 @@
--- Enhanced GUI Library with Fixes
+
 
 local Library = {}
 local TweenService = game:GetService("TweenService")
@@ -42,7 +42,14 @@ function Library:Window(title)
         button.Parent = frame
 
         button.MouseButton1Click:Connect(function()
-            callback() -- Ensure callback is a function
+            -- Debugging output
+            print("Button clicked with label:", label)
+            print("Callback type:", type(callback))
+            if type(callback) == "function" then
+                callback() -- Ensure callback is a function
+            else
+                warn("Callback is not a function")
+            end
         end)
 
         table.insert(buttonCallbacks, callback)
@@ -70,7 +77,14 @@ function Library:Window(title)
         toggle.MouseButton1Click:Connect(function()
             isOn = not isOn
             toggle.Text = tostring(label) .. ": " .. (isOn and "ON" or "OFF") -- Ensure text is a string
-            callback(isOn) -- Ensure callback is a function
+            -- Debugging output
+            print("Toggle state changed:", isOn)
+            print("Callback type:", type(callback))
+            if type(callback) == "function" then
+                callback(isOn) -- Ensure callback is a function
+            else
+                warn("Callback is not a function")
+            end
         end)
 
         table.insert(toggleCallbacks, callback)
@@ -83,4 +97,3 @@ function Library:Window(title)
 end
 
 return Library
-

@@ -1,5 +1,4 @@
 
-
 local Library = {}
 local TweenService = game:GetService("TweenService")
 
@@ -25,11 +24,11 @@ function Library:Window(title)
 
     local function createButton(label, callback)
         if type(label) ~= "string" then
-            warn("createButton: label should be a string")
+            warn("createButton: label should be a string, but got", type(label))
             return
         end
         if type(callback) ~= "function" then
-            warn("createButton: callback should be a function")
+            warn("createButton: callback should be a function, but got", type(callback))
             return
         end
 
@@ -42,9 +41,6 @@ function Library:Window(title)
         button.Parent = frame
 
         button.MouseButton1Click:Connect(function()
-            -- Debugging output
-            print("Button clicked with label:", label)
-            print("Callback type:", type(callback))
             if type(callback) == "function" then
                 callback() -- Ensure callback is a function
             else
@@ -57,11 +53,11 @@ function Library:Window(title)
 
     local function createToggle(label, callback)
         if type(label) ~= "string" then
-            warn("createToggle: label should be a string")
+            warn("createToggle: label should be a string, but got", type(label))
             return
         end
         if type(callback) ~= "function" then
-            warn("createToggle: callback should be a function")
+            warn("createToggle: callback should be a function, but got", type(callback))
             return
         end
 
@@ -77,9 +73,6 @@ function Library:Window(title)
         toggle.MouseButton1Click:Connect(function()
             isOn = not isOn
             toggle.Text = tostring(label) .. ": " .. (isOn and "ON" or "OFF") -- Ensure text is a string
-            -- Debugging output
-            print("Toggle state changed:", isOn)
-            print("Callback type:", type(callback))
             if type(callback) == "function" then
                 callback(isOn) -- Ensure callback is a function
             else

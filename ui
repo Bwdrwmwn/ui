@@ -8,14 +8,14 @@ function Library:Window(title)
     screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
     local frame = Instance.new("Frame")
-    frame.Size = UDim2.new(0, 300, 0, 300)  -- Increased height for more space
+    frame.Size = UDim2.new(0, 300, 0, 300)
     frame.Position = UDim2.new(0.5, -150, 0.5, -150)
     frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     frame.Parent = screenGui
 
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Size = UDim2.new(1, 0, 0, 30)
-    titleLabel.Text = title
+    titleLabel.Text = tostring(title) -- Ensure title is a string
     titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     titleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     titleLabel.Parent = frame
@@ -27,7 +27,7 @@ function Library:Window(title)
         local button = Instance.new("TextButton")
         button.Size = UDim2.new(0.8, 0, 0, 30)
         button.Position = UDim2.new(0.1, 0, 0.1 + (#buttonCallbacks * 0.1), 0)
-        button.Text = label
+        button.Text = tostring(label) -- Ensure label is a string
         button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
         button.TextColor3 = Color3.fromRGB(255, 255, 255)
         button.Parent = frame
@@ -43,7 +43,7 @@ function Library:Window(title)
         local toggle = Instance.new("TextButton")
         toggle.Size = UDim2.new(0.8, 0, 0, 30)
         toggle.Position = UDim2.new(0.1, 0, 0.1 + (#toggleCallbacks * 0.1), 0)
-        toggle.Text = label .. ": OFF"
+        toggle.Text = tostring(label) .. ": OFF" -- Ensure label is a string
         toggle.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
         toggle.TextColor3 = Color3.fromRGB(255, 255, 255)
         toggle.Parent = frame
@@ -51,7 +51,7 @@ function Library:Window(title)
         local isOn = false
         toggle.MouseButton1Click:Connect(function()
             isOn = not isOn
-            toggle.Text = label .. ": " .. (isOn and "ON" or "OFF")
+            toggle.Text = tostring(label) .. ": " .. (isOn and "ON" or "OFF") -- Ensure text is a string
             if callback then callback(isOn) end
         end)
 
